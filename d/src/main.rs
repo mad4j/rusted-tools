@@ -1,13 +1,8 @@
-use chrono::{Datelike, Utc};
+use chrono::{DateTime, Local};
 
 fn main() {
 
-    let now = Utc::now();
+    let now : DateTime<Local> = Local::now();
 
-    print!(
-        "{:04}{:02}{:02}",
-        now.year(),
-        now.month(),
-        now.day()
-    );
+    println!("{}", now.format("%Y%m%d"));
 }
