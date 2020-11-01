@@ -2,7 +2,7 @@
 simple utilities in Rust
 
 
-## d
+## today
 prints local today date on standard output using **yyyymmdd** format
 
 ## yes
