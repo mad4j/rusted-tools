@@ -1,5 +1,5 @@
 [package]
-name = "d"
+name = "today"
 version = "0.1.0"
 authors = ["Daniele Olmisani <mad4j@users.noreply.github.com>"]
 edition = "2018"
