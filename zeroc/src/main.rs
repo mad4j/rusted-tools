@@ -1,17 +1,32 @@
 
 // zeroc - counts 0 bits
 
+
 use std::fs::File;
 use std::io::{BufReader, Read, Result};
+use structopt::StructOpt;
+
+
+#[derive(Debug, StructOpt)]
+#[structopt(name = "zeroc", about = "counts zero bits")]
+struct Opt {
+    #[structopt(short, long)]
+    path: String,
+    #[structopt(short, long)]
+    verbose: bool
+}
+
 
 fn main() -> Result<()> {
 
-    let path = "file.txt";
+    let opt = Opt::from_args();
 
-    let input = File::open(path)?;
+    let input = File::open(opt.path)?;
     let mut reader = BufReader::new(input);
 
-    let mut counter: u32 = 0;
+    let mut zero_counter: u64 = 0;
+    let mut bit_counter: u64 = 0;
+
     let mut buffer = [0; 1024];
 
     loop {
@@ -19,51 +34,21 @@ fn main() -> Result<()> {
         if i == 0 {
             break;
         }
-        for k in &buffer {
-            counter += k.count_zeros();
+
+        bit_counter += 8*(i as u64);
+
+        for b in 0..i {
+            zero_counter += buffer[b].count_zeros() as u64;
         }
     }
 
-    println!("{}", counter);
+    let ratio = zero_counter as f32 / bit_counter as f32;
 
-    Ok(())
-}
-
-
-/*
-
-use data_encoding::HEXUPPER;
-use ring::digest::{Context, Digest, SHA256};
-use std::fs::File;
-use std::io::{BufReader, Read, Write, Result};
-
-fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest> {
-    let mut context = Context::new(&SHA256);
-    let mut buffer = [0; 1024];
-
-    loop {
-        let count = reader.read(&mut buffer)?;
-        if count == 0 {
-            break;
-        }
-        context.update(&buffer[..count]);
+    if opt.verbose {
+        println!("{} / {} ({})", zero_counter, bit_counter, ratio);
+    } else {
+        println!("{}", zero_counter);
     }
 
-    Ok(context.finish())
-}
-
-fn main() -> Result<()> {
-    let path = "file.txt";
-
-    let mut output = File::create(path)?;
-    write!(output, "We will generate a digest of this text")?;
-
-    let input = File::open(path)?;
-    let reader = BufReader::new(input);
-    let digest = sha256_digest(reader)?;
-
-    println!("SHA-256 digest is {}", HEXUPPER.encode(digest.as_ref()));
-
     Ok(())
 }
-*/
