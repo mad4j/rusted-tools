@@ -41,7 +41,7 @@ fn main() -> Result<()> {
 
     //report results
     if opt.verbose {
-        println!("{} / {} ({:.2})", zeros, bits, ratio);
+        println!("{} / {} ({:6.2} %)", zeros, bits, 100_f32 * ratio);
     } else {
         println!("{}", zeros);
     }
