@@ -8,7 +8,7 @@ use structopt::StructOpt;
 
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "zeroc", about = "counts zero bits")]
+#[structopt(name = "zeroc", about = "counts zero bits in a file")]
 struct Opt {
 
     /// File to be analized
@@ -26,10 +26,9 @@ fn main() -> Result<()> {
     let opt = Opt::from_args();
 
     let input = File::open(opt.path)?;
-    let mut reader = BufReader::new(input);
+    let mut reader = BufReader::new(&input);
 
     let mut zero_counter: u64 = 0;
-    let mut bit_counter: u64 = 0;
 
     let mut buffer = [0; 1024];
 
@@ -39,12 +38,12 @@ fn main() -> Result<()> {
             break;
         }
 
-        bit_counter += 8*(i as u64);
-
         for b in 0..i {
             zero_counter += buffer[b].count_zeros() as u64;
         }
     }
+
+    let bit_counter: u64 = 8 * input.metadata()?.len();
 
     let ratio = zero_counter as f32 / bit_counter as f32;
 
