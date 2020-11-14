@@ -10,8 +10,12 @@ use structopt::StructOpt;
 #[derive(Debug, StructOpt)]
 #[structopt(name = "zeroc", about = "counts zero bits")]
 struct Opt {
+
+    /// File to be analized
     #[structopt(short, long)]
     path: String,
+
+    /// Detailed information output
     #[structopt(short, long)]
     verbose: bool
 }
@@ -45,7 +49,7 @@ fn main() -> Result<()> {
     let ratio = zero_counter as f32 / bit_counter as f32;
 
     if opt.verbose {
-        println!("{} / {} ({})", zero_counter, bit_counter, ratio);
+        println!("{} / {} ({:.2})", zero_counter, bit_counter, ratio);
     } else {
         println!("{}", zero_counter);
     }
