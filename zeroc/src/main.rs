@@ -1,16 +1,12 @@
-
 // zeroc - counts 0 bits
-
 
 use std::fs::File;
 use std::io::{BufReader, Read, Result};
 use structopt::StructOpt;
 
-
 #[derive(Debug, StructOpt)]
 #[structopt(name = "zeroc", about = "counts zero bits in a file")]
 struct Opt {
-
     /// File to be analized
     #[structopt(short, long)]
     path: String,
@@ -20,9 +16,7 @@ struct Opt {
     verbose: bool,
 }
 
-
 fn main() -> Result<()> {
-
     //parse command-line parameters
     let opt = Opt::from_args();
 
@@ -36,10 +30,9 @@ fn main() -> Result<()> {
     let bits: u64 = 8 * input.metadata()?.len();
 
     //count zero bits in file
-    let zeros: u64 = reader.bytes()
-                        .fold(0, |zeros, byte| zeros + byte
-                                                        .unwrap_or_default()
-                                                        .count_zeros() as u64);
+    let zeros: u64 = reader.bytes().fold(0, |zeros, byte| {
+        zeros + byte.unwrap_or_default().count_zeros() as u64
+    });
 
     //compute zero bits ratio
     let ratio = zeros as f32 / bits as f32;
@@ -51,6 +44,6 @@ fn main() -> Result<()> {
         println!("{}", zeros);
     }
 
-    //return success 
+    //return success
     Ok(())
 }
