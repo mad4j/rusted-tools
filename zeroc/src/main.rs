@@ -17,41 +17,40 @@ struct Opt {
 
     /// Detailed information output
     #[structopt(short, long)]
-    verbose: bool
+    verbose: bool,
 }
 
 
 fn main() -> Result<()> {
 
+    //parse command-line parameters
     let opt = Opt::from_args();
 
+    //open file
     let input = File::open(opt.path)?;
-    let mut reader = BufReader::new(&input);
 
-    let mut zero_counter: u64 = 0;
+    //pass a reference so the ownership remains here
+    let reader = BufReader::with_capacity(1024, &input);
 
-    let mut buffer = [0; 1024];
+    //count total number of bits in file
+    let bits: u64 = 8 * input.metadata()?.len();
 
-    loop {
-        let i = reader.read(&mut buffer)?;
-        if i == 0 {
-            break;
-        }
+    //count zero bits in file
+    let zeros: u64 = reader.bytes()
+                        .fold(0, |zeros, byte| zeros + byte
+                                                        .unwrap_or_default()
+                                                        .count_zeros() as u64);
 
-        for b in 0..i {
-            zero_counter += buffer[b].count_zeros() as u64;
-        }
-    }
+    //compute zero bits ratio
+    let ratio = zeros as f32 / bits as f32;
 
-    let bit_counter: u64 = 8 * input.metadata()?.len();
-
-    let ratio = zero_counter as f32 / bit_counter as f32;
-
+    //report results
     if opt.verbose {
-        println!("{} / {} ({:.2})", zero_counter, bit_counter, ratio);
+        println!("{} / {} ({:.2})", zeros, bits, ratio);
     } else {
-        println!("{}", zero_counter);
+        println!("{}", zeros);
     }
 
+    //return success 
     Ok(())
 }
