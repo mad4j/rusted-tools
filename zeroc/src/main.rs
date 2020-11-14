@@ -20,7 +20,7 @@ fn main() -> Result<()> {
     //parse command-line parameters
     let opt = Opt::from_args();
 
-    //open file
+    //open file or return error
     let input = File::open(opt.path)?;
 
     //pass a reference so the ownership remains here
@@ -30,12 +30,14 @@ fn main() -> Result<()> {
     let bits: u64 = 8 * input.metadata()?.len();
 
     //count zero bits in file
-    let zeros: u64 = reader.bytes().fold(0, |zeros, byte| {
-        zeros + byte.unwrap_or_default().count_zeros() as u64
-    });
+    let zeros: u64 = reader
+        .bytes()
+        .map(|x| x.unwrap_or_default())
+        .map(|x| x.count_zeros() as u64)
+        .sum();
 
     //compute zero bits ratio
-    let ratio = zeros as f32 / bits as f32;
+    let ratio: f32 = zeros as f32 / bits as f32;
 
     //report results
     if opt.verbose {
