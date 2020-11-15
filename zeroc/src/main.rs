@@ -17,35 +17,35 @@ struct Opt {
 }
 
 fn main() -> Result<()> {
-    //parse command-line parameters
+    // parse command-line parameters
     let opt = Opt::from_args();
 
-    //open file or return error
+    // open file or return error
     let input = File::open(opt.path)?;
 
-    //pass a reference so the ownership remains here
+    // pass a reference so the ownership remains here
     let reader = BufReader::with_capacity(1024, &input);
-
-    //count total number of bits in file
-    let bits: u64 = 8 * input.metadata()?.len();
-
-    //count zero bits in file
+    
+    // count zero bits in file
     let zeros: u64 = reader
         .bytes()
         .map(|x| x.unwrap_or_default())
         .map(|x| x.count_zeros() as u64)
         .sum();
 
-    //compute zero bits ratio
+    // count total number of bits in file
+    let bits: u64 = 8 * input.metadata()?.len();
+
+    // compute zero bits ratio
     let ratio: f32 = zeros as f32 / bits as f32;
 
-    //report results
+    // report results
     if opt.verbose {
         println!("{} / {} ({:6.2} %)", zeros, bits, 100_f32 * ratio);
     } else {
         println!("{}", zeros);
     }
 
-    //return success
+    // return success
     Ok(())
 }
