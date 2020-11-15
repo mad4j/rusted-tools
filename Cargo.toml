@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "today",
+    "yes",
+    "zeroc",
+]
