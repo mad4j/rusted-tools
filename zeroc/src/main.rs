@@ -4,6 +4,8 @@ use std::fs::File;
 use std::io::{BufReader, Read, Result};
 use structopt::StructOpt;
 
+use colored::Colorize;
+
 #[derive(Debug, StructOpt)]
 #[structopt(name = "zeroc", about = "counts zero bits in a file")]
 struct Opt {
@@ -40,12 +42,12 @@ fn main() -> Result<()> {
     let ratio: f32 = zeros as f32 / bits as f32;
 
     // report results
-    if opt.verbose {
-        println!("{} / {} ({:6.2} %)", zeros, bits, 100_f32 * ratio);
+    let report = if opt.verbose {
+        format!("{} / {} ({:6.2} %)", zeros, bits, 100_f32 * ratio)
     } else {
-        println!("{}", zeros);
-    }
+        format!("{}", zeros)
+    };
+    println!("{}", report.yellow());
 
-    // return success
     Ok(())
 }
