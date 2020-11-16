@@ -27,7 +27,7 @@ fn main() -> Result<()> {
 
     // pass a reference so the ownership remains here
     let reader = BufReader::with_capacity(1024, &input);
-    
+
     // count zero bits in file
     let zeros: u64 = reader
         .bytes()
@@ -43,11 +43,17 @@ fn main() -> Result<()> {
 
     // report results
     let report = if opt.verbose {
-        format!("{} / {} ({:6.2} %)", zeros, bits, 100_f32 * ratio)
+        format!(
+            "{} / {} ({})",
+            format!("{}", zeros,),
+            format!("{}", bits),
+            format!("{:6.2} %", 100_f32 * ratio).bold()
+        )
+        .yellow()
     } else {
-        format!("{}", zeros)
+        format!("{}", zeros).yellow().bold()
     };
-    println!("{}", report.yellow());
+    println!("{}", report);
 
     Ok(())
 }
